@@ -1,0 +1,43 @@
+/server
+│
+├── /config                    # Configuration files (database, environment variables)
+│   ├── db.js                  # PostgreSQL database connection
+│   └── config.js              # General config (e.g., JWT secret, API keys)
+│
+├── /controllers               # Business logic for each entity (CRUD operations)
+│   ├── authController.js      # Logic for user authentication (login, register)
+│   ├── productController.js   # Logic for handling products (CRUD)
+│   ├── orderController.js     # Logic for handling orders (create, manage, process)
+│   └── userController.js      # Logic for user profile management
+│
+├── /models                    # PostgreSQL database models (ORMs)
+│   ├── userModel.js           # User schema (name, email, password, etc.)
+│   ├── productModel.js        # Product schema (name, price, description, etc.)
+│   ├── orderModel.js          # Order schema (user, products, total, status)
+│   └── cartModel.js           # Cart schema (userId, productId, quantity)
+│
+├── /routes                    # API route definitions
+│   ├── authRoutes.js          # Routes for authentication (login, register)
+│   ├── productRoutes.js       # Routes for product management (CRUD)
+│   ├── orderRoutes.js         # Routes for order processing
+│   └── userRoutes.js          # Routes for user-related operations
+│
+├── /middleware                # Middleware for request handling
+│   ├── authMiddleware.js      # Authentication (JWT validation)
+│   ├── errorMiddleware.js     # Global error handler
+│   └── adminMiddleware.js     # Admin privileges check
+│
+├── /utils                     # Utility functions
+│   ├── sendEmail.js           # Send emails for notifications (order confirmation, etc.)
+│   └── formatOrder.js         # Format the order data for displaying or saving
+│
+├── /validators                # Input validation files (using libraries like Joi or express-validator)
+│   ├── authValidator.js       # Validation for login, registration, and authentication input
+│   ├── productValidator.js    # Validation for product input (name, price, description)
+│   └── orderValidator.js      # Validation for order creation (address, payment method)
+│
+├── /services                  # Integration with external services (payment, email, etc.)
+│   └── paymentService.js      # Logic to interact with payment APIs (Stripe, PayPal, etc.)
+│
+├── server.js                  # Main Express server setup (app initialization)
+└── package.json               # Backend dependencies and project info
