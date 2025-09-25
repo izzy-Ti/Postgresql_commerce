@@ -41,3 +41,31 @@
 │
 ├── server.js                  # Main Express server setup (app initialization)
 └── package.json               # Backend dependencies and project info
+
+
+
+That’s a solid start. A few important features you might want to add for a full e-commerce flow:
+
+Order history (list all orders by user)
+
+Payment integration (Stripe/PayPal, store transaction details)
+
+Search & filter products (by name, category, price, etc.)
+
+Product reviews & ratings
+
+Wishlist (separate from cart if you want favorites)
+
+Inventory management (auto-decrement stock on purchase, prevent overselling)
+
+Seller dashboard (see products, sales, earnings)
+
+Admin features: manage users, products, orders
+
+Email notifications (order confirmation, shipping updates)
+
+Shipping/tracking info (order status: pending, shipped, delivered)
+
+Discounts / coupons
+
+Want me to draft a clean feature list grouped by roles (User, Seller, Admin)?

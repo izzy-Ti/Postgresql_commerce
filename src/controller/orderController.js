@@ -158,3 +158,16 @@ export const UpdateOrder = async (req,res) => {
         return res.json({success: false, message: error.message})     
     }
 }
+export const orderHistory = async (req, res) =>{
+    const {userId} = req.body
+    try{
+        const sql_order = `
+            SELECT * FROM orders WHERE buyer_id = $1;
+        `
+        const orders = await pool.query(sql_order, [userId])
+        res.json({success: true, orders: orders.rows, message: 'Request successfull'})
+        
+    } catch(error){
+        return res.json({success: false, message: error.message})     
+    }
+}
