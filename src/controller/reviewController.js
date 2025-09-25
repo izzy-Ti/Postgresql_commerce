@@ -44,7 +44,20 @@ export const productRating = async (req,res) =>{
         `
         const rate = await pool.query(sql_query, [productId])
         const Rate = rate.rows[0].average_rating
-        res.json({success: true, Rate: Rate, message: 'Review submitted successfully successfull'})
+        res.json({success: true, Rate: Rate, message: 'Request successfull'})
+    } catch(error){
+        return res.json({success: false, message: error.message})     
+    }
+}
+export const productReviews = async (req, res) =>{
+    const {productId} = req.params
+    try{
+        const sql_query = `
+            SELECT * FROM reviews WHERE product_id = $1
+        `
+        const result = await pool.query(sql_query, [productId])
+        const reviews = result.rows[0]
+       res.json({success: true, reviews: reviews, message: 'Request successfull'})
     } catch(error){
         return res.json({success: false, message: error.message})     
     }
