@@ -135,3 +135,32 @@ export const deleteCart = async (req,res) => {
         return res.json({success: false, message: error.message})     
     }
 }
+export const filterProduct = async (req,res) => {
+    const { name, category, minPrice, maxPrice } = req.query
+    let conditions = []
+    let values = []
+    try{
+            if(name){
+        values.push(`%${name}%`)
+        conditions.push(`name ILIKE $${values.length}`)
+        }
+        if(category){
+            values.push(category)
+            conditions.push(`category = $${values.length}`)
+        }
+        if(minPrice){
+            values.push(minPrice)
+            conditions.push(`price >= $${values.length}`)
+        }
+        if(maxPrice){
+            values.push(maxPrice)
+            conditions.push(`price <= $${values.length}`)
+        }
+        const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
+        const sql_query = `SELECT * FROM products ${whereClause}`
+        const products = await pool.query(sql_query, values)
+        res.json({success: true, products: products.rows, message: 'Request successfull'})
+    } catch(error){
+        return res.json({success: false, message: error.message})     
+    }
+}
