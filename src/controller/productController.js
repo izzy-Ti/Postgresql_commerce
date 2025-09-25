@@ -5,15 +5,16 @@ import transporter from "../config/nodeMailer.js";
 
 export const createProduct = async (req, res) =>{
     const {userId, name, description, price, stock, category } = req.body
+    const images = req.files.map(f => f.path);
     try{
-        if(!name || !description || !price || !stock || !category) {
+        if(!name || !description || !price || !stock || !category || !images) {
             return res.json({success: false, message: "Missing details"})     
         }
         const sql_query = `
-            INSERT INTO products (seller_id, name,  description, price, stock, category )
-            VALUES ($1, $2, $3, $4, $5, $6);
+            INSERT INTO products (seller_id, name,  description, price, stock, category , images)
+            VALUES ($1, $2, $3, $4, $5, $6, $7);
         `
-        await pool.query(sql_query, [userId, name, description, price, stock, category])
+        await pool.query(sql_query, [userId, name, description, price, stock, category, images])
         res.json({success: true, message: 'Product saved successfully'})
     }catch(error){
         return res.json({success: false, message: error.message})     

@@ -2,6 +2,8 @@ import pool from "../config/db.js";
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import transporter from "../config/nodeMailer.js";
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_KEY);
 
 
 export const createOrder = async (req, res) =>{
@@ -26,6 +28,10 @@ export const createOrder = async (req, res) =>{
         const Seller = await pool.query(sql_user, [product.seller_id])
         const seller = Seller.rows[0]
         const total_price = quantity * product.price;
+        const paymentIntent = await stripe.paymentIntents.create({
+                amount: Math.round(total_price * 100),
+                currency: 'usd',
+            });
         const sql_query = `
             INSERT INTO orders (buyer_id, product_id, quantity, total_price, shipping_address_id)
             VALUES ($1, $2, $3, $4, $5)
@@ -38,7 +44,7 @@ export const createOrder = async (req, res) =>{
         html: `
             <div style="font-family: 'Arial', sans-serif; background-color: #1e2a1f; color: #fff; padding: 20px; border-radius: 8px;">
                 <div style="text-align: center;">
-                    <h1 style="color: #28a745;">🎉 Order Confirmed! 🎉</h1>
+                    <h1 style="color: #28a745;"> Order Confirmed! </h1>
                     <p style="font-size: 16px; color: #aaa;">Thank you for shopping with SIMBA Shop.</p>
                 </div>
                 <div style="background-color: #2e3d2b; padding: 20px; border-radius: 8px; margin-top: 20px;">
@@ -50,7 +56,7 @@ export const createOrder = async (req, res) =>{
                         </tr>
                         <tr>
                             <td style="padding: 8px; font-weight: bold;">Total Paid:</td>
-                            <td style="padding: 8px;">${total_price}</td>
+                            <td style="padding: 8px;">${total_price}$</td>
                         </tr>
                         <tr>
                             <td style="padding: 8px; font-weight: bold;">Shipping Address:</td>
@@ -73,7 +79,7 @@ export const createOrder = async (req, res) =>{
         html: `
             <div style="font-family: 'Arial', sans-serif; background-color: #1e2a1f; color: #fff; padding: 20px; border-radius: 8px;">
                 <div style="text-align: center;">
-                    <h1 style="color: #28a745;">🎉 New Order Alert! 🎉</h1>
+                    <h1 style="color: #28a745;">New Order Alert! </h1>
                     <p style="font-size: 16px; color: #aaa;">${User.name} has placed an order.</p>
                 </div>
                 <div style="background-color: #2e3d2b; padding: 20px; border-radius: 8px; margin-top: 20px;">
@@ -93,7 +99,7 @@ export const createOrder = async (req, res) =>{
                         </tr>
                         <tr>
                             <td style="padding: 8px; font-weight: bold;">Total Paid:</td>
-                            <td style="padding: 8px;">${total_price}</td>
+                            <td style="padding: 8px;">${total_price}$</td>
                         </tr>
                         <tr>
                             <td style="padding: 8px; font-weight: bold;">Shipping Address:</td>
