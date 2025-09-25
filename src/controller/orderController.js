@@ -28,6 +28,9 @@ export const createOrder = async (req, res) =>{
         const Seller = await pool.query(sql_user, [product.seller_id])
         const seller = Seller.rows[0]
         const total_price = quantity * product.price;
+        if(quantity > product.stock){
+            return res.json({success: false, message: "There is no enough quantity"})     
+        }
         const paymentIntent = await stripe.paymentIntents.create({
                 amount: Math.round(total_price * 100),
                 currency: 'usd',
@@ -37,6 +40,12 @@ export const createOrder = async (req, res) =>{
             VALUES ($1, $2, $3, $4, $5)
         `
         await pool.query(sql_query, [userId, productId, quantity, total_price , userAdressId.id])
+        const sql_stock = `
+            UPDATE products
+            SET stock = $1
+            WHERE id = $2
+        `
+        await pool.query(sql_stock, [product.stock - quantity, productId])
         const mailOption = {
         from: process.env.EMAIL,
         to: User.email,
@@ -144,21 +153,6 @@ export const UpdateOrder = async (req,res) => {
         `
         await pool.query(sql_query, [status, orderId])
         res.json({success: true, message: 'Order Updated successfully'})
-
-    } catch(error){
-        return res.json({success: false, message: error.message})     
-    }
-}
-export const watchList = async (req, res) =>{
-    const {userId} = req.body
-    const {productId} = req.params
-    try{
-        const sql_query = `
-            INSERT INTO user_wishlist (user_id, product_id)
-            VALUES ($1, $2)
-        `
-        await pool.query(sql_query, [userId, productId])
-        res.json({success: true, message: 'Cart added successfully'})
 
     } catch(error){
         return res.json({success: false, message: error.message})     

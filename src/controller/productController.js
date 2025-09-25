@@ -114,3 +114,24 @@ export const cartItems = async (req, res) =>{
         return res.json({success: false, message: error.message})     
     }
 }
+export const deleteCart = async (req,res) => {
+    const {cartId} = req.params
+    const {userId} = req.body
+    try{
+        const sql_cart = `
+            SELECT * FROM user_wishlist WHERE id = $1;
+        `
+        const cart = await pool.query(sql_cart, [cartId])
+        const Cart = cart.rows[0]
+        if(Cart.user_id !== userId){
+            return res.json({success: false, message: "Sorry you are not authorized"})     
+        }
+        const sql_query = `
+            DELETE FROM user_wishlist WHERE id = $1;
+        `
+        await pool.query(sql_query, [cartId])
+        res.json({success: true, message: 'Request successfull'})
+    } catch(error){
+        return res.json({success: false, message: error.message})     
+    }
+}
